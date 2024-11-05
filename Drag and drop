@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag and Drop</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="column" id="column1" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <div class="box" draggable="true" ondragstart="drag(event)">Item 1</div>
+      <div class="box" draggable="true" ondragstart="drag(event)">Item 2</div>
+    </div>
+    <div class="column" id="column2" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <div class="box" draggable="true" ondragstart="drag(event)">Item 3</div>
+      <div class="box" draggable="true" ondragstart="drag(event)">Item 4</div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+CSS
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+  }
+  
+  .container {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .column {
+    width: 150px;
+    min-height: 200px;
+    padding: 10px;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+  }
+  
+  .box {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #4CAF50;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    cursor: move;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+  }
+  
+  .box.dragging {
+    opacity: 0.5;
+  }
+  
+Javascript
+
+function allowDrop(event) {
+    event.preventDefault();
+  }
+  
+  function drag(event) {
+    event.dataTransfer.effectAllowed = "copy";
+    event.dataTransfer.setData("text/plain", event.target.id);
+    event.target.classList.add("dragging");
+  }
+  
+  function drop(event) {
+    event.preventDefault();
+    
+    const targetColumn = event.target.closest('.column');
+    
+    if (targetColumn) {
+      const draggedElement = document.querySelector('.dragging');
+      const clonedElement = draggedElement.cloneNode(true);
+      clonedElement.classList.remove("dragging");
+      clonedElement.addEventListener("dragstart", drag);
+      
+      targetColumn.appendChild(clonedElement);
+    }
+    
+    document.querySelectorAll('.dragging').forEach(element => {
+      element.classList.remove('dragging');
+    });
+  }
+  
